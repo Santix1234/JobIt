@@ -1,0 +1,61 @@
+// Authentication and User Profile Schema
+
+datasource db {
+  provider = "sqlite" // Using SQLite for simplicity, can be changed to PostgreSQL in production
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User model with comprehensive authentication and profile details
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String?   @unique
+  firstName     String?
+  lastName      String?
+  passwordHash  String
+  profileImage  String?
+  
+  // Authentication and security fields
+  emailVerified DateTime?
+  lastLogin     DateTime?
+  
+  // Saved jobs relationship
+  savedJobs     SavedJob[]
+  
+  // Account creation and update tracking
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Optional fields for extended profile
+  location      String?
+  bio           String?
+  skills        String?
+  resumeUrl     String?
+}
+
+// Model to track user's saved job postings
+model SavedJob {
+  id            String   @id @default(cuid())
+  userId        String
+  jobId         String   // External job identifier
+  jobTitle      String
+  companyName   String
+  savedAt       DateTime @default(now())
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, jobId])
+}
+
+// Optional: Refresh token model for enhanced authentication security
+model RefreshToken {
+  id            String    @id @default(cuid())
+  token         String    @unique
+  userId        String
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
+}
