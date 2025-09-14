@@ -8,10 +8,14 @@
     "start": "next start",
     "lint": "next lint",
     "ionic:build": "npm run build",
-    "ionic:serve": "npm run start"
+    "ionic:serve": "npm run start",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate:reset": "prisma migrate reset"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.1",
+    "@prisma/client": "^6.8.2",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-checkbox": "^1.0.4",
@@ -74,6 +78,7 @@
     "eslint-plugin-react": "^7.32.2",
     "prettier": "^3.0.0",
     "prettier-plugin-tailwindcss": "^0.4.0",
+    "prisma": "^6.8.2",
     "typescript": "^5.1.6"
   }
 }
