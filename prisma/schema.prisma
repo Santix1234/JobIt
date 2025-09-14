@@ -1,0 +1,60 @@
+// Prisma schema for Authentication and User Management
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User model for authentication and profile management
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String?   @unique
+  password      String    // Hashed password
+  firstName     String?
+  lastName      String?
+  profileImage  String?
+  bio           String?
+  
+  // Authentication and security fields
+  emailVerified DateTime?
+  lastLogin     DateTime?
+  
+  // Job saving and tracking
+  savedJobs     SavedJob[]
+  
+  // Auditing and tracking
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([email, username])
+}
+
+// Model to track saved jobs for users
+model SavedJob {
+  id            String    @id @default(cuid())
+  userId        String
+  jobId         String
+  savedAt       DateTime  @default(now())
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, jobId])
+  @@index([userId])
+}
+
+// Optional: Add OAuth provider model if needed in future
+model OAuthAccount {
+  id            String    @id @default(cuid())
+  userId        String
+  provider      String
+  providerAccountId String
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+}
