@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Replace with your actual database provider
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication and profile management
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String?   @unique
+  password      String
+  firstName     String?
+  lastName      String?
+  profileImage  String?
+  
+  // Authentication and account management fields
+  emailVerified DateTime?
+  isActive      Boolean   @default(true)
+  role          UserRole  @default(USER)
+  
+  // Timestamps for tracking user creation and updates
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations for saved jobs and other potential future features
+  savedJobs     SavedJob[]
+}
+
+// Enum for user roles to manage access control
+enum UserRole {
+  USER
+  ADMIN
+}
+
+// Model to track saved jobs for users
+model SavedJob {
+  id        String   @id @default(cuid())
+  userId    String
+  jobId     String
+  savedAt   DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, jobId])
+}
+
+// Optional: Add any additional models or schema definitions as needed
